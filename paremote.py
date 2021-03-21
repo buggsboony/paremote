@@ -6,6 +6,12 @@ from datetime import datetime
 #import urllib.parse #urlencode  urllib.parse.quote("somethingTOencode")
 import subprocess
 
+#--------- WS, websocket server stuff
+import asyncio
+import websockets
+#---------------------
+
+
 
 class bcolors:
     HEADER = '\033[95m'
@@ -36,15 +42,15 @@ class bcolors:
     LCYAN='\033[1;36m'
     NC='\033[0m' # No Color
     
-
-
-
 #print(bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.ENDC)
 
 appname='paremote'
 homedir = os.path.expanduser("~")
 configfile=  homedir + '/.config/'+appname+'/'+appname+'.json'
 logfile= homedir+ '/.config/'+appname+'/debug.txt'
+
+
+
 
 #os.system('echo "error: '+sys.exc_info()[0]+'">'+logfile)
 
@@ -53,11 +59,42 @@ if len(sys.argv) >=2 and  ( (sys.argv[1]=='-f') or (sys.argv[1]=='force')or (sys
     print(bcolors.WARNING + "Action : removing configfile'"+configfile+"'" + bcolors.ENDC)
     os.remove(configfile)
 
-
 os.system('date>'+logfile)
 
 
+# core program :
 
+
+WS_PORT=8365
+
+async def receive(ws, path):
+    try:
+       async for message in ws:
+            await ws.send('Serveur : je recois ceci: '+message)
+            print('message reçu : "'+message+"'")
+    except:
+        print('Quelque chose a mal tourné !')
+        print(sys.exc_info()[0])
+
+
+asyncio.get_event_loop().run_until_complete(
+    websockets.serve(receive, 'localhost', WS_PORT))
+asyncio.get_event_loop().run_forever() #N'aura pas besoin d'être fermé.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ---------- ending -----------------------------
 
 os.system('echo Terminé>>'+logfile)
 print(bcolors.WHITE+ appname+ "=> Terminé.."+bcolors.ENDC)
