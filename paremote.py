@@ -67,6 +67,7 @@ os.system('./startserver.sh')
 
 # core program :
 WS_PORT=8365
+WS_HOST="192.168.0.183" # Yet localhost, mais doit correspondre au WS dans le HTML
 os.system('echo Starting websocket python server>'+logfile)
 print(bcolors.CYAN+'Starting websocket server on port '+ str(WS_PORT) + bcolors.ENDC)
 
@@ -81,7 +82,7 @@ async def receive(ws, path):
 
 
 asyncio.get_event_loop().run_until_complete(
-    websockets.serve(receive, 'localhost', WS_PORT))
+    websockets.serve(receive, WS_HOST, WS_PORT))
 asyncio.get_event_loop().run_forever() #N'aura pas besoin d'être fermé.
 
 

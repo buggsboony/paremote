@@ -67,15 +67,17 @@ var WS_PORT = 8365;
                 {
                     //alert("websocket is supported");
                 }
-                              ws = new WebSocket('ws://localhost:'+WS_PORT); 
+                var wsurl='ws://192.168.0.183:'+WS_PORT;
+                message(wsurl);
+                         ws = new WebSocket(wsurl); 
                         ws.onmessage = function(event)
                         {message("message received"); 
                         message("DATA : "+event.data);  // ws.close();
                         } 
 
-                        ws.onopen = function(){ message("open");} 
-                        ws.onclose = function(){message("close");}
-                        ws.onerror = function(){message("error");}
+                        ws.onopen = function(e){ message("open"); console.warn(e,"onoppen(e)");} 
+                        ws.onclose = function(e){message("close");}
+                        ws.onerror = function(e){message("error");}
                     }catch(eee){ alert(eee.message)}
     
         }//connect
