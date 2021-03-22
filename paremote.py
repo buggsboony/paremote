@@ -61,11 +61,14 @@ if len(sys.argv) >=2 and  ( (sys.argv[1]=='-f') or (sys.argv[1]=='force')or (sys
 
 os.system('date>'+logfile)
 
+os.system('echo starting web server >'+logfile)
+print(bcolors.WHITE+' Starting webserver..')
+os.system('./startserver.sh')
 
 # core program :
-
-
 WS_PORT=8365
+os.system('echo Starting websocket python server>'+logfile)
+print(bcolors.CYAN+'Starting websocket server on port '+ str(WS_PORT) + bcolors.ENDC)
 
 async def receive(ws, path):
     try:

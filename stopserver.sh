@@ -19,7 +19,7 @@ if [ -z "$py_serv_pid" ]; then :
    printf "${WHITE}No pid found, no server to stop. ${NC}\n"
 else
     
-    printf "${WHITE} Stopping web server pid: $py_serv_pid. ${NC}\n"
+    printf "${WHITE}Stopping web server pid: $py_serv_pid. ${NC}\n"
     #kill SIGTERM(15), SIGINT(2), SIGQUIT(3), SIGABRT(6) , SIGKILL(9) 
 
     killed=$(kill -15 $py_serv_pid)

@@ -13,7 +13,7 @@ NC='\033[0m' # No Color
 
 
 
-python_webserver_command="python3 -m http.server 8381"
+python_webserver_command="python3 -m http.server 8381 -d www"
 ./stopserver.sh "$python_webserver_command"
 #python_webserver_command="python"
 printf "${YELL}Start web server in '$(pwd)'${NC}\n"
@@ -22,7 +22,7 @@ $python_webserver_command &
 sleep 2
 #write process id to file
 
-echo "COMMAND:[$python_webserver_command]"
+printf "${WHITE}Server Command : [$python_webserver_command]${NC}\n"
 #$(ps -ef | grep \"$python_webserver_command\" -m1 | awk{'print\$2'})
 #Afficher tous les PIDs qui répondent à la recherche
 #ps -ef | grep -i "$python_webserver_command"   |  awk ' {  print " "$2"  " }  '
@@ -33,5 +33,5 @@ py_serv_pid=$(ps -ef | grep -i "$python_webserver_command"  -m1 |  awk ' {  prin
 #$("$grep_results") | awk {'print'}
 
     
-echo "Server PID is '$py_serv_pid'"
+printf "${YELL}Web Server PID is '$py_serv_pid'${NC}\n"
 echo $py_serv_pid>pid

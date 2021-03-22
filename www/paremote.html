@@ -1,5 +1,42 @@
 <html>
-<title>Pulse Audio Remote Control</title>
+    <head>        
+        <title>Pulse Audio Remote Control</title>
+    </head>
+    
+      
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+  
+    <title>βChess online by βoon</title>
+    <style>
+    
+    .invisible
+    { display:none;
+    }
+    
+    #toast
+    {
+        display:none;
+        position: absolute;
+        background: rgba(21, 35, 174, 0.63);
+        border: solid 1px #3A3535;
+        width: 227px;
+        height: 20px;
+        padding: 8px;
+        border-radius: 4px;
+        color: rgb(240, 240, 241);
+        top: 0;
+        left: 148px;
+        font-weight:bold;
+    }
+    
+    #logs
+    {
+      width:100%;
+      overflow:scroll;
+    }
+    </style>    
 <body>
     
     <div>Pulse Audio Remote Control</div>
@@ -17,39 +54,30 @@
 
 var socket;
 var WS_PORT = 8365;
-        function connec_notworking() {
-            try {
-
-                var host = "ws://localhost:"+WS_PORT;
-                socket = new WebSocket(host, "chat");
-                message('<p class="event">Socket Status: ' + socket.readyState);
-                socket.onopen = function () {
-                    message('<p class="event">ON OPEN : Socket Status: ' + socket.readyState + ' (open)');
-                }
-                socket.onmessage = function (msg) {
-                    console.log(msg,"msg");
-                    message('<p class="message">ON MSG : Received: ' + msg.data);                   
-                }
-                socket.onclose = function () {
-                    message('<p class="event">ON CLOSE: Socket Status: ' + socket.readyState + ' (Closed)');
-                }
-            } catch (exception) {
-                message('<p>EXCEPTION:Error' + exception);
-            }
-        }
-
+      
         var ws=null;
         function connect()
         {
+            try{
+                supportsWebSockets = 'WebSocket' in window || 'MozWebSocket' in window;
+                if(!supportsWebSockets)
+                {
+                    throw "Websocket not supported !";
+                }else 
+                {
+                    //alert("websocket is supported");
+                }
+                              ws = new WebSocket('ws://localhost:'+WS_PORT); 
+                        ws.onmessage = function(event)
+                        {message("message received"); 
+                        message("DATA : "+event.data);  // ws.close();
+                        } 
 
-            ws = new WebSocket('ws://localhost:8765'); 
-            ws.onmessage = function(event){message("message received"); 
-            message("DATA : "+event.data);  // ws.close();
-            } 
-
-            ws.onopen = function(){ message("open");} 
-            ws.onclose = function(){message("close");}
-            ws.onerror = function(){message("error");}
+                        ws.onopen = function(){ message("open");} 
+                        ws.onclose = function(){message("close");}
+                        ws.onerror = function(){message("error");}
+                    }catch(eee){ alert(eee.message)}
+    
         }//connect
 
         function closesock()
@@ -59,10 +87,19 @@ var WS_PORT = 8365;
 
         function hello(str)
         {
+            if(ws === null ) alert("Non connecté");
             if(str == undefined) str ="hello server";
-
             ws.send(str);
         }
+
+
+        function sendCommand(str,command)
+        {
+            if(ws === null ) alert("Non connecté");
+            if(str == undefined) str ="com "+command;
+            ws.send(str);
+        }
+
 
         function message(msg) {
             var log = document.getElementById('chatLog');
@@ -70,6 +107,7 @@ var WS_PORT = 8365;
         }
 
 
+        connect();
     </script>
 </body>
 </html>
