@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, user-scalable=no">
   
-    <title>βChess online by βoon</title>
+    <title>Pulse Audio Remote by βoon</title>
     <style>
     
     .invisible
@@ -38,6 +38,15 @@
     }
     </style>    
 <body>
+
+<?php
+
+    $ip = $_SERVER["HTTP_HOST"];
+    $ip = $_SERVER["REMOTE_ADDR"]; //histoire d'etre sur d'obtenir une vraie adresse.
+ 
+
+echo "hostname =>"; var_dump( $ip);
+?>
     
     <div>Pulse Audio Remote Control</div>
 
@@ -54,6 +63,7 @@
 
 var socket;
 var WS_PORT = 8365;
+var WS_IP = "<?php echo $ip;?>";
       
         var ws=null;
         function connect()
@@ -67,7 +77,7 @@ var WS_PORT = 8365;
                 {
                     //alert("websocket is supported");
                 }
-                var wsurl='ws://192.168.0.183:'+WS_PORT;
+                var wsurl='ws://'+WS_IP+':'+WS_PORT;
                 message(wsurl);
                          ws = new WebSocket(wsurl); 
                         ws.onmessage = function(event)

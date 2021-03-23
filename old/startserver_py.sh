@@ -11,11 +11,9 @@ CYAN='\033[0;36m'
 LCYAN='\033[1;36m'
 NC='\033[0m' # No Color
 
-DEFAULT_IP=$(ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{print""$2""}' )
-printf "Default IP address : [${LCYAN}$DEFAULT_IP${NC}]\n"
 
 
-python_webserver_command="php -S $DEFAULT_IP:8381 -t www"
+python_webserver_command="python3 -m http.server 8381 -d www"
 ./stopserver.sh "$python_webserver_command"
 #python_webserver_command="python"
 printf "${YELL}Start web server in '$(pwd)'${NC}\n"
