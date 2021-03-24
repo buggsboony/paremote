@@ -36,6 +36,52 @@
       width:100%;
       overflow:scroll;
     }
+    
+
+    #volume_btns button
+    {
+        width:90%;
+        height:100px;
+        padding:10px;
+        margin-left:5%;
+        margin-right:5%;
+        margin-bottom:10px;
+        font-size: 60px;
+        color: #32FFDE
+        ;
+        background-color:   #560700;
+    }
+
+
+    #record_btns button
+    {
+        width:25%;
+        height:60px;
+        padding:10px;
+     
+        margin-bottom:10px;
+        font-size: 20px;
+        color: #32FFDE
+        ;
+        background-color:   #560700;
+    }
+
+    body{
+        background-color:#3A3535;
+    color:#A9AEAB;
+    }
+
+    textarea{
+        width:90%;
+        color:#EFEFC4;
+        background-color: #0E0D19;
+
+        height:140px;
+        padding:10px;
+        margin-left:5%;
+        margin-right:5%;
+        margin-bottom:10px;
+    }
     </style>    
 <body>
 
@@ -45,10 +91,47 @@
     $ip = $_SERVER["REMOTE_ADDR"]; //histoire d'etre sur d'obtenir une vraie adresse.
  
 
-echo "hostname =>"; var_dump( $ip);
+    //echo "hostname =>"; var_dump( $ip);
 ?>
     
-    <div>Pulse Audio Remote Control</div>
+    <h4>Pulse Audio Remote Control by Boon</h4>
+
+    
+
+<textarea>
+[boony@atuf ~]$ pactl set-sink-volume @DEFAULT_SINK@ +10%
+[boony@atuf ~]$ pactl set-sink-volume @DEFAULT_SINK@ -10%
+Volume de l'entrée (Source , Capture)
+[boony@atuf ~]$ pactl set-source-volume @DEFAULT_SOURCE@ -10%    
+[boony@atuf ~]$ pactl set-source-volume @DEFAULT_SOURCE@ +10%
+
+Enregistrer du son via pacmd pulseaudio tool
+
+Lister le microphones :
+pacmd list-sources | grep -i alsa_input
+
+[boony@atuf ~]$ pacmd list-sources | grep -i alsa_output -A 2
+        name: <alsa_output.pci-0000_00_1f.3.analog-stereo.monitor>
+        driver: <module-alsa-card.c>
+        flags: DECIBEL_VOLUME LATENCY DYNAMIC_LATENCY
+
+
+        Enregistrer le son sortant avec FFMPEG  … press Q to stop.
+ffmpeg -f pulse -i default output.wav
+2021-02-27 12:12:21 - Tenter d'arreter ffmpeg recording :
+SIGTERM(15), SIGINT(2), SIGQUIT(3), SIGABRT(6) , SIGKILL(9)
+2021-02-27 12:17:41 - et ça fonctionne : 
+
+ubuuny@cuube:~$ ps -ef | grep -i ffmpeg | grep -v grep
+ubuuny    131165    7377  1 12:14 pts/0    00:00:00 ffmpeg -f pulse -i default record01.wav
+ubuuny@cuube:~$ kill -3 131165
+
+
+
+</textarea>
+
+
+
 
     <button onclick="connect();">CONNECT</button>
     <button onclick="hello();">Say hello</button>
@@ -59,7 +142,25 @@ echo "hostname =>"; var_dump( $ip);
     </div>
 
 
+
+    <div id="record_btns">
+    <button onclick="startRecording();" style=";" >Rec</button>
+    <button onclick="stopRecording();" style="" >Stop</button>
+    </div>
+
+<hr/>
+
+<div id="volume_btns">
+    <button onclick="volume(+volume_step);">Vol+</button>
+    <button onclick="volume(-volume_step);">Vol-</button>
+</div>
+
+
+
     <script>
+var volume_step=10;
+
+
 
 var socket;
 var WS_PORT = 8365;
