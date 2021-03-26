@@ -78,9 +78,24 @@
 
         height:140px;
         padding:10px;
+        padding-top:4px;
+        padding-bottom:0px; /* Pour éviter le scroll vertical */
         margin-left:5%;
         margin-right:5%;
         margin-bottom:10px;
+    }
+    .numeric_field
+    {
+        width:20px;
+        padding:2px;
+        border: solid 1px #777;
+        background-color:#A9AEAB;
+        color:bisque;
+    }
+
+    .text_field
+    {
+       height:40px;
     }
     </style>    
 <body>
@@ -88,9 +103,9 @@
 <?php
 
     $ip = $_SERVER["HTTP_HOST"];
-    $ip = $_SERVER["REMOTE_ADDR"]; //histoire d'etre sur d'obtenir une vraie adresse.
+    $ip = $_SERVER["SERVER_NAME"]; //histoire d'etre sur d'obtenir une vraie adresse.
  
-
+    //echo "<pre>SERVER Infos: \n"; var_dump( $_SERVER ); echo "</pre>";
     //echo "hostname =>"; var_dump( $ip);
 ?>
     
@@ -131,6 +146,12 @@ ubuuny@cuube:~$ kill -3 131165
 </textarea>
 
 
+    <label>Load playback command :</label>
+    <textarea id="playback_command" class="text_field">pactl load-module module-loopback latency_msec=1 sink=0</textarea>
+
+    <label>Record command  :</label>
+    <textarea id="record_command" class="text_field">ffmpeg -f pulse -i default output_{{timestamp}}.wav</textarea>
+
 
 
     <button onclick="connect();">CONNECT</button>
@@ -143,8 +164,11 @@ ubuuny@cuube:~$ kill -3 131165
 
 
 
-    <div id="record_btns">
-    <button onclick="startRecording();" style=";" >Rec</button>
+    <div id="record_btns">    
+    <button onclick="playback();" style="" >playback</button>
+    
+    
+    <button onclick="startRecording();" style="" >Rec</button>
     <button onclick="stopRecording();" style="" >Stop</button>
     </div>
 
@@ -158,12 +182,14 @@ ubuuny@cuube:~$ kill -3 131165
 
 
     <script>
+try{
+       
 var volume_step=10;
 
 
 
 var socket;
-var WS_PORT = 8365;
+var WS_PORT = 8364;
 var WS_IP = "<?php echo $ip;?>";
       
         var ws=null;
@@ -199,17 +225,17 @@ var WS_IP = "<?php echo $ip;?>";
         }
 
         function hello(str)
-        {
-            if(ws === null ) alert("Non connecté");
+        {           
+            if(ws === null ){ alert("Non connecté"); return ;}
             if(str == undefined) str ="hello server";
             ws.send(str);
         }
 
 
-        function sendCommand(str,command)
+        function sendCommand(command)
         {
-            if(ws === null ) alert("Non connecté");
-            if(str == undefined) str ="com "+command;
+            var str ="EXEC:\n"+command;
+            if(ws === null ){ alert("Non connecté"); return ;}          
             ws.send(str);
         }
 
@@ -220,7 +246,27 @@ var WS_IP = "<?php echo $ip;?>";
         }
 
 
+        function playback()
+        {
+            var el=document.getElementById("playback_command");
+            sendCommand(el.value);
+        }
+        function startRecording()
+        {
+            var el=document.getElementById("record_command");
+            sendCommand(el.value);
+        }
+        function stopRecording()
+        {           
+            sendCommand("STOP_REC");
+        }
+
+                
         connect();
+    }catch(ge)
+    {
+        alert("Aouch ! "+ge.message);
+    }
     </script>
 </body>
 </html>

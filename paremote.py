@@ -6,6 +6,9 @@ from datetime import datetime
 #import urllib.parse #urlencode  urllib.parse.quote("somethingTOencode")
 import subprocess
 
+#Retrieve IP adresse :
+import socket
+import netifaces  #pip install import netifaces
 #--------- WS, websocket server stuff
 import asyncio
 import websockets
@@ -50,8 +53,47 @@ configfile=  homedir + '/.config/'+appname+'/'+appname+'.json'
 logfile= homedir+ '/.config/'+appname+'/debug.txt'
 
 
+# get local ip adresse
+def getLocalIPs():
+    ips=[]
+    interfaces=netifaces.interfaces()  #['lo', 'enp2s0f2', 'wlp3s0']
+    for iface in interfaces :
+        if iface.lower() != 'lo' :        
+            print('Traitement de '+iface)
+            addr=netifaces.ifaddresses(iface)
+            if netifaces.AF_INET in addr:   
+                #print('check afinet pour ', addr) 
+                afinet=addr[netifaces.AF_INET]
+                print('afinet:',afinet)
+                if len(afinet) >= 0 :
+                    netip=afinet[0]
+                    if 'addr' in netip:
+                        ip=netip['addr']                    
+                        print( 'Found IP :\n'+ ip ,"\n" )
+                        ips.append(ip)
+            else:
+                print('Rien d\'interessant pour '+iface)
+        else:
+            print('Avoid loopback interface')
 
 
+    return ips
+
+
+local_ips=getLocalIPs()
+#print("local_ips=>",local_ips)
+#exit()
+
+
+
+
+
+
+# core program :
+WS_PORT=8364
+WS_HOST=local_ips[0] #"192.168.0.183" # Yet localhost, mais doit correspondre au WS dans le HTML
+
+#'''
 #os.system('echo "error: '+sys.exc_info()[0]+'">'+logfile)
 
 
@@ -63,19 +105,19 @@ os.system('date>'+logfile)
 
 os.system('echo starting web server >'+logfile)
 print(bcolors.WHITE+' Starting webserver..')
-os.system('./startserver.sh')
+os.system('./startserver.sh &')  #Start PHP web server and continue ...
 
-# core program :
-WS_PORT=8365
-WS_HOST="192.168.0.183" # Yet localhost, mais doit correspondre au WS dans le HTML
 os.system('echo Starting websocket python server>'+logfile)
-print(bcolors.CYAN+'Starting websocket server on port '+ str(WS_PORT) + bcolors.ENDC)
+print(bcolors.CYAN+'Starting WS(WebSocket) => '+bcolors.LCYAN+WS_HOST+":"+ str(WS_PORT) + bcolors.ENDC)
+
+#'''
+
 
 async def receive(ws, path):
     try:
        async for message in ws:
-            await ws.send('Serveur : je recois ceci: '+message)
             print('message reçu : "'+message+"'")
+            await ws.send('WSServeur : ACK: '+message)
     except:
         print('Quelque chose a mal tourné !')
         print(sys.exc_info()[0])

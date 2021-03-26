@@ -5,6 +5,7 @@ what=${PWD##*/}
 extension=.py
 #peut être extension vide
 
+pip install netifaces
 pip install websockets
 
 ## Créer le répertoire de configuration
