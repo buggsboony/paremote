@@ -111,12 +111,24 @@ os.system('echo Starting websocket python server>'+logfile)
 print(bcolors.CYAN+'Starting WS(WebSocket) => '+bcolors.LCYAN+WS_HOST+":"+ str(WS_PORT) + bcolors.ENDC)
 
 
+#Lister les commands autorisées
+allowed_commands={"pacmd", "pactl", "STOP_REC", "ffmpeg" ,"kate"}
 
 #''' Fonction d'analyse :
 def analyse(full):
     response = ('analyse de ----'+full+'----')
+    lines = full.split("\n")
     parts = full.split() #Sépare par whitespaces , meme le \n et \t sont reconnus
-    com = parts[0]
+    precom = parts[0]
+    com = parts[1]
+    if(com in allowed_commands):
+        print('commande autorisée')
+       #Exécuter la commande :
+        out = os.popen( lines[1] )
+        output=out.read()
+        print(output) #Rempcaer {{timestamp}}
+    else :
+        print("'"+com+"' n'est pas une commande autorisée")
     return response
 
 #'''
