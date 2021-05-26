@@ -110,14 +110,23 @@ os.system('./startserver.sh &')  #Start PHP web server and continue ...
 os.system('echo Starting websocket python server>'+logfile)
 print(bcolors.CYAN+'Starting WS(WebSocket) => '+bcolors.LCYAN+WS_HOST+":"+ str(WS_PORT) + bcolors.ENDC)
 
-#'''
 
+
+#''' Fonction d'analyse :
+def analyse(full):
+    response = ('analyse de ----'+full+'----')
+    parts = full.split() #Sépare par whitespaces , meme le \n et \t sont reconnus
+    com = parts[0]
+    return response
+
+#'''
 
 async def receive(ws, path):
     try:
        async for message in ws:
-            print('message reçu : "'+message+"'")
-            await ws.send('WSServeur : ACK: '+message)
+            print("message reçu : ["+message+"]")
+            response=analyse(message)
+            await ws.send('WSServeur : ACK: '+response)
     except:
         print('Quelque chose a mal tourné !')
         print(sys.exc_info()[0])
